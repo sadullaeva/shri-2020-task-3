@@ -1,5 +1,6 @@
 import {
     createConnection,
+    CancellationToken,
     ProposedFeatures,
     TextDocuments,
     InitializeParams,
@@ -8,6 +9,7 @@ import {
     DiagnosticSeverity,
     DidChangeConfigurationParams
 } from 'vscode-languageserver';
+import { HandlerResult } from 'vscode-jsonrpc';
 
 import { basename } from 'path';
 
@@ -20,7 +22,7 @@ let conn = createConnection(ProposedFeatures.all);
 let docs = new TextDocuments();
 let conf: ExampleConfiguration | undefined = undefined;
 
-conn.onInitialize((params: InitializeParams) => {
+conn.onInitialize((params: InitializeParams, token: CancellationToken): HandlerResult<any, any> => {
     return {
         capabilities: {
             textDocumentSync: 'always'
@@ -79,7 +81,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
             ? [
                   {
                       key: RuleKeys.UppercaseNamesIsForbidden,
-                      loc: property.key.loc
+                      loc: property.loc
                   }
               ]
             : [];
