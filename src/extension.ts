@@ -15,6 +15,8 @@ import {
 const serverBundleRelativePath = join('out', 'server.js');
 const previewPath: string = resolve( __dirname, '../preview/index.html');
 const previewHtml: string = readFileSync(previewPath).toString();
+const stylePath: string = resolve( __dirname, '../preview/style.css');
+const style: string = readFileSync(stylePath).toString();
 const template = bemhtml.compile();
 
 let client: LanguageClient;
@@ -95,6 +97,8 @@ const updateContent = (doc: vscode.TextDocument, context: vscode.ExtensionContex
                             return html;
                         case 'mediaPath':
                             return getMediaPath(context);
+                        case 'style':
+                            return `<style>${style}</style>`;
                         default:
                             return str;
                     }
