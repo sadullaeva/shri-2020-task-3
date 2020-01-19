@@ -35,6 +35,90 @@
 					],
 					"default": "Warning",
 					"description": "The 'warningTextSizesShouldBeEqual' rule severity."
+				},
+				"example.severity.warningInvalidButtonSize": {
+					"type": "string",
+					"enum": [
+						"Error",
+						"Warning",
+						"Information",
+						"Hint",
+						"None"
+					],
+					"default": "Warning",
+					"description": "The 'warningInvalidButtonSize' rule severity."
+				},
+				"example.severity.warningInvalidButtonPosition": {
+					"type": "string",
+					"enum": [
+						"Error",
+						"Warning",
+						"Information",
+						"Hint",
+						"None"
+					],
+					"default": "Warning",
+					"description": "The 'warningInvalidButtonPosition' rule severity."
+				},
+				"example.severity.warningInvalidPlaceholderSize": {
+					"type": "string",
+					"enum": [
+						"Error",
+						"Warning",
+						"Information",
+						"Hint",
+						"None"
+					],
+					"default": "Warning",
+					"description": "The 'warningInvalidPlaceholderSize' rule severity."
+				},
+				"example.severity.textSeveralH1": {
+					"type": "string",
+					"enum": [
+						"Error",
+						"Warning",
+						"Information",
+						"Hint",
+						"None"
+					],
+					"default": "Warning",
+					"description": "The 'textSeveralH1' rule severity."
+				},
+				"example.severity.textInvalidH2Position": {
+					"type": "string",
+					"enum": [
+						"Error",
+						"Warning",
+						"Information",
+						"Hint",
+						"None"
+					],
+					"default": "Warning",
+					"description": "The 'textInvalidH2Position' rule severity."
+				},
+				"example.severity.textInvalidH3Position": {
+					"type": "string",
+					"enum": [
+						"Error",
+						"Warning",
+						"Information",
+						"Hint",
+						"None"
+					],
+					"default": "Warning",
+					"description": "The 'textInvalidH3Position' rule severity."
+				},
+				"example.severity.gridTooMuchMarketingBlocks": {
+					"type": "string",
+					"enum": [
+						"Error",
+						"Warning",
+						"Information",
+						"Hint",
+						"None"
+					],
+					"default": "Warning",
+					"description": "The 'gridTooMuchMarketingBlocks' rule severity."
 				}
 			}
 		},
