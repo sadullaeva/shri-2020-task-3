@@ -1,6 +1,5 @@
 import {
     createConnection,
-    CancellationToken,
     ProposedFeatures,
     TextDocuments,
     InitializeParams,
@@ -9,33 +8,40 @@ import {
     DiagnosticSeverity,
     DidChangeConfigurationParams
 } from 'vscode-languageserver';
-import { HandlerResult } from 'vscode-jsonrpc';
 
 import { basename } from 'path';
 
-import * as jsonToAst from "json-to-ast";
+import { ExampleConfiguration, Severity, RuleKeys, ruleKeysResolveMap } from './configuration';
+import { lint } from './linter';
 
-import { ExampleConfiguration, Severity, RuleKeys } from './configuration';
-import { makeLint, LinterProblem } from './linter';
+interface LinterProblem {
+    code: string;
+    error: string;
+    location: {
+        start: { column: number; line: number; };
+        end: { column: number; line: number; };
+    };
+}
 
 let conn = createConnection(ProposedFeatures.all);
 let docs = new TextDocuments();
 let conf: ExampleConfiguration | undefined = undefined;
 
-conn.onInitialize((params: InitializeParams, token: CancellationToken): HandlerResult<any, any> => {
+conn.onInitialize((params: InitializeParams) => {
     return {
         capabilities: {
-            textDocumentSync: 'always'
+            textDocumentSync: docs.syncKind
         }
     };
 });
 
-function GetSeverity(key: RuleKeys): DiagnosticSeverity | undefined {
+function GetSeverity(key: string): DiagnosticSeverity | undefined {
     if (!conf || !conf.severity) {
         return undefined;
     }
 
-    const severity: Severity = conf.severity[key];
+    const ruleKey = ruleKeysResolveMap[key];
+    const severity: Severity = conf.severity[RuleKeys[ruleKey]];
 
     switch (severity) {
         case Severity.Error:
@@ -51,64 +57,33 @@ function GetSeverity(key: RuleKeys): DiagnosticSeverity | undefined {
     }
 }
 
-function GetMessage(key: RuleKeys): string {
-    if (key === RuleKeys.BlockNameIsRequired) {
-        return 'Field named \'block\' is required!';
-    }
-
-    if (key === RuleKeys.UppercaseNamesIsForbidden) {
-        return 'Uppercase properties are forbidden!';
-    }
-
-    return `Unknown problem type '${key}'`;
-}
-
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     const source = basename(textDocument.uri);
-    const json = textDocument.uri;
+    const json = textDocument.getText();
 
-    const validateObject = (
-        obj: jsonToAst.AstObject
-    ): LinterProblem<RuleKeys>[] =>
-        obj.children.some(p => p.key.value === 'block')
-            ? []
-            : [{ key: RuleKeys.BlockNameIsRequired, loc: obj.loc }];
-
-    const validateProperty = (
-        property: jsonToAst.AstProperty
-    ): LinterProblem<RuleKeys>[] =>
-        /^[A-Z]+$/.test(property.key.value)
-            ? [
-                  {
-                      key: RuleKeys.UppercaseNamesIsForbidden,
-                      loc: property.loc
-                  }
-              ]
-            : [];
-
-    const diagnostics: Diagnostic[] = makeLint(
-        json,
-        validateProperty,
-        validateObject
-    ).reduce(
+    const lintProblems: LinterProblem[] = lint(json) || [];
+    const diagnostics: Diagnostic[] = lintProblems.reduce(
         (
             list: Diagnostic[],
-            problem: LinterProblem<RuleKeys>
+            problem: LinterProblem
         ): Diagnostic[] => {
-            const severity = GetSeverity(problem.key);
+            const { code, error, location } = problem;
+            const severity = GetSeverity(code);
 
             if (severity) {
-                const message = GetMessage(problem.key);
-
                 let diagnostic: Diagnostic = {
                     range: {
-                        start: textDocument.positionAt(
-                            problem.loc.start.offset
-                        ),
-                        end: textDocument.positionAt(problem.loc.end.offset)
+                        start: {
+                            line: location.start.line,
+                            character: location.start.column
+                        },
+                        end: {
+                            line: location.end.line,
+                            character: location.end.column
+                        }
                     },
+                    message: error,
                     severity,
-                    message,
                     source
                 };
 

@@ -43,7 +43,10 @@ const createLanguageClient = (context: vscode.ExtensionContext): LanguageClient 
         documentSelector: [
             { scheme: 'file', language: 'json' }
         ],
-        synchronize: { configurationSection: 'example' }
+        synchronize: {
+            configurationSection: 'example',
+            fileEvents: vscode.workspace.createFileSystemWatcher('**/*.json')
+        }
     };
 
     client = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions);

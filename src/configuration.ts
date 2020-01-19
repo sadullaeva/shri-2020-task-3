@@ -1,7 +1,10 @@
 export enum RuleKeys {
-    UppercaseNamesIsForbidden = 'uppercaseNamesIsForbidden',
-    BlockNameIsRequired = 'blockNameIsRequired',
+    'warningTextSizesShouldBeEqual'
 }
+
+export const ruleKeysResolveMap: { [key: string]: RuleKeys } = {
+    'WARNING.TEXT_SIZES_SHOULD_BE_EQUAL': RuleKeys.warningTextSizesShouldBeEqual,
+};
 
 export enum Severity {
     Error = "Error", 
@@ -11,10 +14,9 @@ export enum Severity {
     None = "None"
 }
 
-export interface SeverityConfiguration {
-    [RuleKeys.BlockNameIsRequired]: Severity;
-    [RuleKeys.UppercaseNamesIsForbidden]: Severity;
-}
+export type SeverityConfiguration = {
+    [key: string]: Severity;
+};
 
 export interface ExampleConfiguration {
  

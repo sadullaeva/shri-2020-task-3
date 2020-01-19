@@ -21,10 +21,10 @@
 			"properties": {
 				"example.enable": {
 					"type": "boolean",
-					"default": false,
+					"default": true,
 					"description": "Enable/disable example linter."
 				},
-				"example.severity.uppercaseNamesIsForbidden": {
+				"example.severity.warningTextSizesShouldBeEqual": {
 					"type": "string",
 					"enum": [
 						"Error",
@@ -34,19 +34,7 @@
 						"None"
 					],
 					"default": "Warning",
-					"description": "The 'uppercaseNamesIsForbidden' rule severity."
-				},
-				"example.severity.blockNameIsRequired": {
-					"type": "string",
-					"enum": [
-						"Error",
-						"Warning",
-						"Information",
-						"Hint",
-						"None"
-					],
-					"default": "Warning",
-					"description": "The 'blockNameIsRequired' rule severity."
+					"description": "The 'warningTextSizesShouldBeEqual' rule severity."
 				}
 			}
 		},
